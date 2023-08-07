@@ -1,12 +1,16 @@
-import { CountButton } from "~features/count-button"
-
-import "~style.css"
+import { NotificationLauncher } from "~notificationLauncher"
+import Home from "./home"
+import "./style.css"
+import Store from '~store';
 
 function IndexPopup() {
   return (
-    <div className="plasmo-flex plasmo-items-center plasmo-justify-center plasmo-h-16 plasmo-w-40">
-      <CountButton />
-    </div>
+    <body className="p-4 w-96">
+    <Store>
+      <Home/>
+      <NotificationLauncher/>
+    </Store>
+    </body>
   )
 }
 
