@@ -14,9 +14,9 @@ export default function Home() {
 
 
    async function handleSubmit() {
-      // alert(`${loadout} is ready to go! It will launch ${urlArray} on ${JSON.stringify(state)}`)
+      alert(`${loadout} is ready to go! It will launch ${urlArray} on ${JSON.stringify(state)}`)
        console.log('clicked')
-       const response = await chrome.runtime.sendMessage({greeting: "sewer"});
+       const response = await chrome.runtime.sendMessage({greeting: "sewer", urlArray: urlArray, time: state});
        console.log(response);
 
   }
