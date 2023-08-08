@@ -1,15 +1,15 @@
-import { NotificationLauncher } from "~notificationLauncher"
-import Home from "./home"
+import Home from "./components/home"
+
 import "./style.css"
-import Store from '~store';
+
+import Store from "~helpers/store"
 
 function IndexPopup() {
   return (
-    <body className="p-4 w-96">
-    <Store>
-      <Home/>
-      <NotificationLauncher/>
-    </Store>
+    <body className="p-4 w-fit">
+      <Store>
+        <Home />
+      </Store>
     </body>
   )
 }

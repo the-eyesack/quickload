@@ -1,71 +1,73 @@
-import moment from 'moment';
-import openLinks from '~helpers';
-moment().format();
-let triggerTime : any
-let urlArray : Array<string> = []
-chrome.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    console.log(sender.tab ?
-                "from a content script:" + sender.tab.url :
-                "from the extension");
-    if (request.greeting === "hello")
-      {
-        let options = {
-          type: 'basic',
-          title: 'Basic Notification',
-          message: 'This is a Basic Notification',
-          iconUrl: 'https://static.wikia.nocookie.net/leagueoflegends/images/7/74/Flash.png/revision/latest?cb=20180514003149'
-        };
-        // @ts-ignore
-        chrome.notifications.create(options);
-    
-        sendResponse({farewell: "goodbye"})
-      }
-    if (request.greeting === "sewer") {
-      // console.log(request.time)
-      urlArray = request.urlArray
-      for(let i in request.time) {
-        if(request.time[i].active) {
-          const timeBreakdown: Array<number> = request.time[i].time.split(':')
+import moment from "moment"
 
-          triggerTime = moment().day(i).set({'hour': timeBreakdown[0], 'minute': timeBreakdown[1], 'second': 0, 'millisecond': 0})
-          interval;
+import setLocalStorage from "~workers/localStorage"
+import notification from "~workers/notification"
+import triggerDetect from "~workers/triggerDetect"
 
-        }
-      }
+moment().format()
+let triggerTime = []
+let name: string
+let urlArray: Array<string> = []
+let frequency: number
 
-      chrome.alarms.create('demo-default-alarm', {
-        delayInMinutes: 0.1
-      });
-
-        sendResponse({farewell: "goodbye"})
+//startup
+chrome.runtime.onStartup.addListener(() => {
+  notification(
+    "basic",
+    "Startup",
+    "Quickload started",
+    "https://t4.ftcdn.net/jpg/01/89/83/87/360_F_189838722_kX2hOMITZEg0spM9tgEpfJBVJoWb70kh.jpg"
+  )
+  chrome.storage.local.get().then((result) => {
+    console.log(result)
+    for (let i in result) {
+      triggerDetect(
+        i,
+        result[i].triggerTime,
+        result[i].urls,
+        result[i].frequency
+      )
     }
+  })
+})
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  //get time and url array
+  if (request.greeting === "sewer") {
+    urlArray = request.urlArray
+    frequency = request.frequency
+    name = request.name
+    console.log(name)
+
+    for (let i in request.time) {
+      if (request.time[i].active) {
+        const timeBreakdown: Array<number> = request.time[i].time.split(":")
+
+        triggerTime.push(
+          moment()
+            .day(i)
+            .set({
+              hour: timeBreakdown[0],
+              minute: timeBreakdown[1],
+              second: 0,
+              millisecond: 0
+            })
+            .toISOString()
+        )
+      }
+    }
+
+    triggerDetect(name, triggerTime, urlArray, frequency)
+    setLocalStorage(name, urlArray, frequency, triggerTime)
+    console.log(triggerTime)
+    notification(
+      "basic",
+      "Loadout set!",
+      "Your loadout will go off at " +
+        moment(triggerTime[0]).format("dddd, MMMM Do YYYY, h:mm:ss a" + "."),
+      "https://t4.ftcdn.net/jpg/01/89/83/87/360_F_189838722_kX2hOMITZEg0spM9tgEpfJBVJoWb70kh.jpg"
+    )
   }
-);
+})
 
-chrome.alarms.onAlarm.addListener((alarm) => {
-  let options = {
-    type: 'basic',
-    title: 'ALARM WENT OFF',
-    message: 'This is a Basic Notification',
-    iconUrl: 'https://static.wikia.nocookie.net/leagueoflegends/images/7/74/Flash.png/revision/latest?cb=20180514003149'
-  };
-  // @ts-ignore
-  chrome.notifications.create(options);
-});
-
-let serviceEnabled : boolean = true
-
-let now = moment()
-
-
-var interval = setInterval(()=> {
-  if(now.isSameOrAfter(triggerTime)) {
-    console.log('triggered')
-    openLinks(urlArray)
-    triggerTime = moment().day(7)
-    now = moment()
-  } else
-    now = moment()
-    // console.log(now)
-}, 1000);
+let serviceEnabled: boolean = true

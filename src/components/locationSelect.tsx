@@ -3,18 +3,8 @@ import { useContext } from "react"
 import { ACTIONS } from "~helpers/reducer"
 import { Context } from "~helpers/store"
 
-export default function TimeSelect() {
+export default function LocationSelect() {
   const [state, dispatch] = useContext(Context)
-
-  const daysOfTheWeek: Array<string> = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ]
 
   return (
     <div>
