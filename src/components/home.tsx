@@ -68,20 +68,6 @@ export default function Home() {
   return (
     <main className={"bg-background"}>
       <h1 className={"font-bold"}>Quickload</h1>
-      <button
-        onClick={(e) => {
-          e.preventDefault()
-          chrome.permissions.request(
-            {
-              permissions: ["geolocation"]
-            },
-            (res) => {
-              console.log(res)
-            }
-          )
-        }}>
-        location
-      </button>
       {/* get old loadouts */}
       {Object.keys(prevQuickload).length !== 0 ? (
         <section>
@@ -137,43 +123,7 @@ export default function Home() {
             />
 
             <div>
-              <h2>Activation Technique</h2>
-              <input
-                name={"activation"}
-                type={"radio"}
-                value={"time"}
-                className={"peer/time"}
-                defaultChecked
-              />
-              <label htmlFor={"time"}>Time</label>
-
-              <input
-                name={"activation"}
-                type={"radio"}
-                value={"location"}
-                className={"peer/location"}
-              />
-              <label htmlFor={"location"}>Location</label>
-
-              <div className={"peer-checked/location:block hidden"}>
-                <h3>Select Location</h3>
-                <div>
-                  <input
-                    value={longitude}
-                    type={"number"}
-                    placeholder={"longitude"}
-                    onChange={(e) => setLongitude(parseInt(e.target.value))}
-                  />
-                  <input
-                    value={latitude}
-                    type={"number"}
-                    placeholder={"latitude"}
-                    onChange={(e) => setLatitude(parseInt(e.target.value))}
-                  />
-                </div>
-              </div>
-
-              <div className={"peer-checked/time:block hidden"}>
+              <div className={"block"}>
                 <h3>Select Time</h3>
 
                 <div className="border-2 border-primary rounded-xl">
